@@ -1,0 +1,20 @@
+{{define "dashboard"}}
+<div id="main-content">
+  <h1>DASHBOARD</h1>
+  <div class="container mx-auto max-w-md bg-gray-200" id="">
+    <div
+      class="mqtt-msgs p-4"
+      id="mqtt-msgs"
+      hx-swap="beforeend"
+      hx-swap-oob="beforeend"
+    >
+      Messages
+      <!-- Messages will be appended here -->
+    </div>
+    <form id="form" class="flex p-4">
+      <input type="text" name="text" min="1" id="messageInput" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</div>
+{{end}}

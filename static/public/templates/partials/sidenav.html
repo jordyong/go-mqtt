@@ -1,0 +1,43 @@
+{{define "sidenav"}}
+<div class="w-56 p-4 sidebar">
+  <img src="/assets/capybara-icon.jpg" class="sidebar-icon" />
+  <ul>
+    <li class="sidebar-item active">
+      <a
+        href="/dashboard"
+        id="nav-dashboard"
+        hx-click="load-content"
+        hx-get="/dashboard"
+        hx-swap="outerHTML"
+        hx-push-url="/dashboard"
+        hx-target="#main-content"
+        ><i class=""></i><span>Dashboard</span></a
+      >
+    </li>
+    <li class="sidebar-item">
+      <a
+        href="/mqtt-messages"
+        id="nav-mqtt-msgs"
+        hx-click="load-content"
+        hx-get="/mqtt-messages"
+        hx-swap="outerHTML"
+        hx-push-url="/mqtt-messages"
+        hx-target="#main-content"
+        ><i class=""></i><span>MQTT Messages</span><i class=""></i
+      ></a>
+    </li>
+    <li class="sidebar-item">
+      <a
+        href="/settings"
+        id="nav-settings"
+        hx-click="load-content"
+        hx-get="/settings"
+        hx-swap="outerHTML"
+        hx-push-url="/settings"
+        hx-target="#main-content"
+        ><i class=""></i><span>Settings</span><i class=""></i
+      ></a>
+    </li>
+  </ul>
+</div>
+{{end}}

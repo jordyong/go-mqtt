@@ -1,0 +1,21 @@
+{{define "index"}}
+<!doctype html>
+<html class="h-full bg-gray-800" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MQTT Dashboard</title>
+    <!-- MQTT.js -->
+    <script src="https://unpkg.com/mqtt@3.0.0/dist/mqtt.min.js"></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+    <!--Tailwind-->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="h-full">
+    {{ template "topbar" .}} {{ template "mqtt-msgs" .}}
+  </body>
+</html>
+
+{{end}}
