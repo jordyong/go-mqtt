@@ -20,36 +20,33 @@
         >$CMD/#</a
       >
     </div>
-    <div class="flex h-full flex-1 flex-col">
+    <div
+      class="flex h-full flex-1 flex-col"
+      hx-ext="ws"
+      ws-connect="/mqtt-logs"
+    >
       <!-- SSE messages are picked up here -->
       <div
         class="flex-1 border"
-        id="msg"
-        hx-swap="beforeend"
-        hx-on::after-settle="this.scrollTo(0, this.scrollHeight);"
+        id="logs"
+        hx-trigger="ws:message"
+        hx-swap="after"
       >
-        test
+        <p>{{ .message }}</p>
       </div>
-      <div class="flex h-min">
-        <div class="flex-1 w-1/6">
-          <input
-            id="url-header"
-            name="url-header"
-            type="url-header"
-            value="Write a Message"
-            required
-            class="block w-full border-0 px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none"
-          />
-        </div>
-        <div class="">
-          <button
-            type="send-mqtt-message"
-            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
-          >
-            Send
-          </button>
-        </div>
-      </div>
+      <form id="form" ws-send="">
+        <input
+          name="mqtt-message"
+          placeholder="Send Message"
+          class="block w-full border-0 px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none"
+        />
+        <button
+          type="send"
+          class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
+        >
+          SEND
+        </button>
+      </form>
     </div>
   </div>
 </div>
