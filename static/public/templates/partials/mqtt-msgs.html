@@ -32,17 +32,17 @@
         hx-trigger="ws:message"
         hx-swap="after"
       >
-        <p>{{ .message }}</p>
+        <p></p>
       </div>
-      <form id="form" ws-send="">
+      <form id="form" class="flex flex-row" ws-send="">
         <input
           name="mqtt-message"
           placeholder="Send Message"
-          class="block w-full border-0 px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none"
+          class="block flex w-full border-0 px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none"
         />
         <button
           type="send"
-          class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
+          class="w-1/16 flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
         >
           SEND
         </button>

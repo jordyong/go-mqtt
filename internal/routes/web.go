@@ -14,6 +14,17 @@ var (
 	upgrader = websocket.Upgrader{}
 )
 
+type htmx_ws_msg struct {
+	MQTTMsg string `json:"mqtt-message"`
+	Headers struct {
+		HXRequest     string `json:"HX-Request"`
+		HXTrigger     string `json:"HX-Trigger"`
+		HXTriggerName string `json:"HX-Trigger-Name"`
+		HXTarget      string `json:"HX-Target"`
+		HXCurrentURL  string `json:"HX-Current-URL"`
+	} `json:"HEADERS"`
+}
+
 func BindWebRoute(a *core.App) {
 	a.Echo.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "index", nil)
@@ -52,11 +63,19 @@ func BindWebRoute(a *core.App) {
 				c.Logger().Error(err)
 			}
 			// Read
-			_, msg, err := ws.ReadMessage()
+			// _, mqttMsg, err := ws.ReadMessage()
+			var mqttMsg htmx_ws_msg
+			err = ws.ReadJSON(&mqttMsg)
 			if err != nil {
 				c.Logger().Error(err)
 			}
-			fmt.Printf("MSG: %s\n", msg)
+			fmt.Printf("MSG: %s\n", mqttMsg.MQTTMsg)
+			fmt.Println("Headers:")
+			fmt.Printf("  HX-Request: %v\n", mqttMsg.Headers.HXRequest)
+			fmt.Printf("  HX-Trigger: %v\n", mqttMsg.Headers.HXTrigger)
+			fmt.Printf("  HX-Trigger-Name: %v\n", mqttMsg.Headers.HXTriggerName)
+			fmt.Printf("  HX-Target: %v\n", mqttMsg.Headers.HXTarget)
+			fmt.Printf("  HX-Current-URL: %v\n", mqttMsg.Headers.HXCurrentURL)
 		}
 	})
 
