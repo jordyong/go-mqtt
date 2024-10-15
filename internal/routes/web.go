@@ -58,12 +58,16 @@ func BindWebRoute(a *core.App) {
 
 		for {
 			// Write
-			err := ws.WriteMessage(websocket.TextMessage, []byte("Hello, Client!"))
+			htmlMessage := fmt.Sprintf(
+				`<div id="message" hx-swap-oob="afterend"><strong>%s:</strong> %s</div>`,
+				"Test",
+				"Hello",
+			)
+			err = ws.WriteMessage(websocket.TextMessage, []byte(htmlMessage))
 			if err != nil {
 				c.Logger().Error(err)
 			}
 			// Read
-			// _, mqttMsg, err := ws.ReadMessage()
 			var mqttMsg htmx_ws_msg
 			err = ws.ReadJSON(&mqttMsg)
 			if err != nil {

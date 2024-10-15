@@ -1,7 +1,10 @@
 {{ define "message" }}
 
-<a class="msg">
-  <div class="message-header"></div>
+<a class="message">
+  <div class="message-header flex">
+    <p>{{ .source }}</p>
+    <p>{{ .time }}</p>
+  </div>
   <div class="message-body p-3">{{ .message }}</div>
 </a>
 
