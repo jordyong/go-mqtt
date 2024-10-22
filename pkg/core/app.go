@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	messages "go-mqtt/pkg/messages"
 	"go-mqtt/render"
 	html "go-mqtt/static"
 	"io/fs"
@@ -15,6 +16,7 @@ type App struct {
 	Echo     *echo.Echo
 	HttpPort int
 	PublicFS fs.FS
+	ChatHub  *messages.Hub
 	MQTT     mqtt.Client
 }
 
@@ -22,6 +24,7 @@ func InitApp() (*App, error) {
 
 	app := &App{
 		Echo:     echo.New(),
+		ChatHub:  messages.NewHub(),
 		HttpPort: 8080,
 		PublicFS: html.PublicFS,
 	}
@@ -38,5 +41,6 @@ func InitApp() (*App, error) {
 	e.Static("/", "static/public/assets")
 	e.Use(middleware.Logger())
 
+	go app.ChatHub.Run()
 	return app, nil
 }
