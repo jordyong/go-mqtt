@@ -41,3 +41,13 @@ func (h *Hub) Run() {
 		}
 	}
 }
+
+func parseHTML(message, time []byte) (HTMLmessage []byte) {
+	HTMLmessage = ([]byte) fmt.Sprintf(
+		`<div id="message" hx-swap-oob="beforeend"><div class="flex justify-end"><div class="bg-gray-300 text-black p-2 rounded-lg max-w-xs">%s: %s%s</div></div></div>`,
+		"Test",
+		message,
+    time,
+	)
+	return HTMLmessage
+}

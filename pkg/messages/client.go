@@ -116,13 +116,9 @@ func (c *Client) writePump() {
 			if err != nil {
 				return
 			}
+
 			fmt.Printf("New Message to write: %s\n", message)
-			htmlMessage := fmt.Sprintf(
-				`<div id="message" hx-swap-oob="afterend"><strong>%s:</strong> %s</div>`,
-				"Test",
-				message,
-			)
-			w.Write([]byte(htmlMessage))
+			w.Write(message)
 
 			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
