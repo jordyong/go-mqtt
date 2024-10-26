@@ -1,21 +1,25 @@
 package messages
 
-import "fmt"
+import ()
 
 type Hub struct {
 	clients    map[*Client]bool
 	broadcast  chan []byte
 	register   chan *Client
 	unregister chan *Client
+
+	ParseHTML func(message []byte) []byte
 }
 
 func NewHub() *Hub {
-	return &Hub{
+	hub := &Hub{
 		broadcast:  make(chan []byte),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
 	}
+
+	return hub
 }
 
 func (h *Hub) Run() {
@@ -29,10 +33,9 @@ func (h *Hub) Run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			fmt.Printf("New Message to broadcast: %s\n", message)
 			for client := range h.clients {
 				select {
-				case client.send <- message:
+				case client.send <- h.ParseHTML(message):
 				default:
 					close(client.send)
 					delete(h.clients, client)
@@ -40,14 +43,4 @@ func (h *Hub) Run() {
 			}
 		}
 	}
-}
-
-func parseHTML(message, time []byte) (HTMLmessage []byte) {
-	HTMLmessage = ([]byte) fmt.Sprintf(
-		`<div id="message" hx-swap-oob="beforeend"><div class="flex justify-end"><div class="bg-gray-300 text-black p-2 rounded-lg max-w-xs">%s: %s%s</div></div></div>`,
-		"Test",
-		message,
-    time,
-	)
-	return HTMLmessage
 }

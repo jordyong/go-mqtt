@@ -37,21 +37,24 @@ func (r *TemplateRenderer) Render(
 	c echo.Context,
 ) error {
 	// Add global methods if data is a map
-	if viewContext, isMap := data.(map[string]interface{}); isMap {
-		viewContext["reverse"] = c.Echo().Reverse
-	}
+	// if viewContext, isMap := data.(map[string]interface{}); isMap {
+	// viewContext["reverse"] = c.Echo().Reverse
+	// }
 
 	return r.Templates.ExecuteTemplate(w, name, data)
 }
 
-func (r *TemplateRenderer) RenderToString(name string, data interface{}) (string, error) {
+func (r *TemplateRenderer) RenderToBytes(name string, data interface{}) (
+	[]byte,
+	error,
+) {
 	var buf []byte
 	w := bytes.NewBuffer(buf)
 
 	err := r.Render(w, name, data, nil)
 	if err != nil {
-		return "", err
+		return []byte(""), err
 	}
 
-	return w.String(), nil
+	return w.Bytes(), nil
 }

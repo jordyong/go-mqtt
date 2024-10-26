@@ -1,11 +1,11 @@
 {{ define "message" }}
 
-<a class="message">
-  <div class="message-header flex">
-    <p>{{ .source }}</p>
-    <p>{{ .time }}</p>
+<div id="message" hx-swap-oob="beforeend">
+  <div class="flex justify-end p-2">
+    <div class="bg-gray-300 text-black p-2 rounded-lg max-w-sx">
+      {{ .message }}
+    </div>
   </div>
-  <div class="message-body p-3">{{ .message }}</div>
-</a>
+</div>
 
-{{end}}
+{{ end }}

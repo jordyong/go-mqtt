@@ -1,7 +1,9 @@
 package core
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	messages "go-mqtt/pkg/messages"
 	"go-mqtt/render"
 	html "go-mqtt/static"
@@ -33,6 +35,18 @@ func InitApp() (*App, error) {
 	renderer, err := render.NewRenderer(app.PublicFS)
 	if err != nil {
 		return nil, errors.New("Failed to create template renderer: " + err.Error())
+	}
+
+	c := app.ChatHub
+	c.ParseHTML = func(msg []byte) []byte {
+		var htmxJSON messages.HTMX_msg
+		err = json.Unmarshal(msg, &htmxJSON)
+		msgHTML, _ := renderer.RenderToBytes("message", map[string]any{
+			"message": htmxJSON.MQTTMsg,
+		})
+		fmt.Printf("msgHTML: %s\n", msgHTML)
+
+		return msgHTML
 	}
 
 	e := app.Echo

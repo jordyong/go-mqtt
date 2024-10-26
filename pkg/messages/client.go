@@ -1,7 +1,6 @@
 package messages
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -45,17 +44,6 @@ type Client struct {
 	send chan []byte
 }
 
-type htmx_ws_msg struct {
-	MQTTMsg string `json:"mqtt-message"`
-	Headers struct {
-		HXRequest     string `json:"HX-Request"`
-		HXTrigger     string `json:"HX-Trigger"`
-		HXTriggerName string `json:"HX-Trigger-Name"`
-		HXTarget      string `json:"HX-Target"`
-		HXCurrentURL  string `json:"HX-Current-URL"`
-	} `json:"HEADERS"`
-}
-
 // readPump pumps messages from the websocket connection to the hub.
 //
 // The application runs readPump in a per-connection goroutine. The application
@@ -72,9 +60,7 @@ func (c *Client) readPump() {
 		func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil },
 	)
 	for {
-		// _, message, err := c.conn.ReadMessage()
-		var mqttMsg htmx_ws_msg
-		err := c.conn.ReadJSON(&mqttMsg)
+		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(
 				err,
@@ -85,8 +71,6 @@ func (c *Client) readPump() {
 			}
 			break
 		}
-		message := bytes.TrimSpace(bytes.Replace([]byte(mqttMsg.MQTTMsg), newline, space, -1))
-		fmt.Printf("New Message to hub: %s\n", message)
 		c.hub.broadcast <- message
 	}
 }
