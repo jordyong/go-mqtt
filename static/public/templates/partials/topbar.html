@@ -1,7 +1,11 @@
 {{define "topbar"}}
-<nav class="flex h-16 items-center border-b-4 border-cyan-500 bg-gray-800">
+<nav
+  id="topbar"
+  class="flex h-auto items-center border-b-4 border-cyan-500 bg-gray-800 shadow-lg"
+  hx-swap-oob="true"
+>
   <div class="mx-5 flex items-center">
-    <div class="">
+    <div class="p-2">
       <img
         class="rounded-full h-12 w-12"
         src="/capybara-icon.jpg"
@@ -26,51 +30,37 @@
   <form
     class="absolute right-0 mx-5 flex flex-row justify-end"
     hx-post="/mqtt-connect"
-    hx-swap="none"
+    hx-swap="outerHTML"
   >
-    <div class="mx-2 w-1/6">
-      <input
-        name="client-name"
-        placeholder="go-mqtt"
-        value="go-mqtt"
-        required
-        class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 focus:outline-none"
-      />
+    <div class="rounded-md bg-gray-300 mx-1 px-3 py-2 text-sm font-medium">
+      {{ .ClientName }}
     </div>
-    <div class="mx-2 w-1/12">
-      <input
-        name="url-header"
-        placeholder="ws://"
-        value="ws://"
-        required
-        class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 focus:outline-none"
-      />
+    <div class="rounded-md bg-gray-300 mx-1 px-3 py-2 text-sm font-medium">
+      {{ .BrokerURL }}
     </div>
-    <div class="mx-2 w-1/6">
-      <input
-        name="ip"
-        placeholder="172.27.35.1"
-        required
-        class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 focus:outline-none"
-      />
+    {{ if .IsConnected }}
+    <div>
+      <button
+        id="mqtt-connection-btn"
+        type="disconnect"
+        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
+        hx-post="/mqtt-disconnect"
+      >
+        Disconnect
+      </button>
     </div>
-    <div class="mx-2 w-1/6">
-      <input
-        name="path"
-        placeholder=":9001/mqtt"
-        value=":9001/mqtt"
-        required
-        class="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 focus:outline-none"
-      />
-    </div>
+    {{ else }}
     <div class="">
       <button
+        id="mqtt-connection-btn"
         type="connect"
         class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
       >
         Connect
       </button>
     </div>
+
+    {{ end }}
   </form>
 </nav>
 {{end}}

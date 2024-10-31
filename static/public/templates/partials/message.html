@@ -1,10 +1,9 @@
 {{ define "message" }}
 
 <div id="message" hx-swap-oob="beforeend">
-  <div class="flex justify-end p-2">
-    <div class="bg-gray-300 text-black p-2 rounded-lg max-w-sx">
-      {{ .message }}
-    </div>
+  <div class="flex flex-col justify-start p-2">
+    <div class="bg-gray-300 text-black p-2 rounded-lg">{{ .message }}</div>
+    <div class="text-sm px-2 text-gray-400">{{ .time }}</div>
   </div>
 </div>
 

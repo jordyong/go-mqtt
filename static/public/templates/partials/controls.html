@@ -1,0 +1,41 @@
+{{ define "controls" }}
+<div
+  class="grid grid-cols-3 gap-3 text-white bg-slate-700 m-4 p-4 rounded-3xl shadow-lg"
+>
+  <button
+    class="row-start-1 col-start-2 text-center bg-cyan-900 rounded-full px-5 py-3 hover:bg-orange-800"
+    hx-get="/cmd?direction=forward"
+    hx-swap="none"
+  >
+    ^
+  </button>
+  <button
+    class="row-start-2 col-start-1 text-center bg-cyan-900 rounded-full px-5 py-3 hover:bg-orange-800"
+    hx-get="/cmd?direction=left"
+    hx-swap="none"
+  >
+    <
+  </button>
+  <button
+    class="row-start-2 col-start-2 text-center bg-cyan-900 rounded-full px-5 py-3 hover:bg-orange-800"
+    hx-get="/cmd?direction=stop"
+    hx-swap="none"
+  >
+    STOP
+  </button>
+  <button
+    class="row-start-2 col-start-3 text-center bg-cyan-900 rounded-full px-5 py-3 hover:bg-orange-800"
+    hx-get="/cmd?direction=right"
+    hx-swap="none"
+  >
+    >
+  </button>
+  <button
+    class="row-start-3 col-start-2 text-center bg-cyan-900 rounded-full px-5 py-3 hover:bg-orange-800"
+    hx-get="/cmd?direction=bottom"
+    hx-swap="none"
+  >
+    v
+  </button>
+</div>
+{{ end }}

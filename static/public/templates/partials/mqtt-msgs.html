@@ -1,53 +1,56 @@
 {{define "mqtt-msgs"}}
-<div class="flex h-2/3 w-full flex-col rounded-xl bg-gray-800">
-  <h1
-    class="h-min rounded-t-xl bg-cyan-500 px-4 py-1 text-center text-black font-bold"
-  >
+<!-- logs -->
+<div class="flex h-auto w-full flex-col rounded-xl bg-cyan-500 shadow-lg">
+  <h1 class="h-min justify-center py-1 text-center font-bold text-black">
     LOGS
   </h1>
-  <div class="flex flex-1 flex-row">
-    <div class="flex flex-col h-full w-max rounded-xl">
-      <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-      <a
-        href="#"
-        class="rounded-md bg-gray-900 px-3 py-2 m-2 text-sm font-medium text-white"
+  <div class="flex h-auto flex-row">
+    <!-- logs sidebar -->
+    <div class="flex w-1/6 flex-col rounded-bl-md bg-gray-800">
+      <div
+        class="m-2 rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
         aria-current="page"
-        >$SYS/#</a
       >
-      <a
-        href="#"
-        class="rounded-md px-3 py-2 m-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-        >$CMD/#</a
+        <p>$SYS/#</p>
+      </div>
+      <div
+        class="m-2 rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
       >
+        <p>$CMD/#</p>
+      </div>
     </div>
+    <!-- ./logs sidebar -->
+    <!-- logs main content -->
     <div
-      class="flex h-full flex-1 flex-col"
+      class="flex w-full flex-col bg-gray-700 p-3 rounded-br-md"
       hx-ext="ws"
       ws-connect="/mqtt-logs"
     >
-      <!-- SSE messages are picked up here -->
       <div
-        class="flex-1 border"
+        class="h-96 overflow-auto my-2"
         id="logs"
         hx-trigger="ws:message"
         hx-swap="after"
       >
+        <!-- SSE messages are picked up here -->
         <div id="message"></div>
       </div>
-      <form id="form" class="flex flex-row" ws-send="">
+      <form id="form" class="flex flex-row bg-gray-700" ws-send="">
         <input
           name="mqtt-message"
           placeholder="Send Message"
-          class="block flex w-full border-0 px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none"
+          class="flex w-full rounded-l-md border-0 px-3 py-1.5 text-gray-900 placeholder:text-gray-400 focus:outline-none"
         />
         <button
           type="send"
-          class="w-1/16 flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
+          class="w-1/16 flex justify-center rounded-r-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
         >
           SEND
         </button>
       </form>
     </div>
+    <!-- ./logs main content -->
   </div>
 </div>
+<!-- ./logs -->
 {{end}}

@@ -4,12 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go-mqtt/pkg/core/config"
 	messages "go-mqtt/pkg/messages"
-	"go-mqtt/render"
+	"go-mqtt/pkg/mqtt"
+	"go-mqtt/pkg/render"
 	html "go-mqtt/static"
 	"io/fs"
+	"time"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
+	eclipseMQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -19,16 +22,24 @@ type App struct {
 	HttpPort int
 	PublicFS fs.FS
 	ChatHub  *messages.Hub
-	MQTT     mqtt.Client
+	MQTT     eclipseMQTT.Client
+	Config   *config.Configuration
 }
 
 func InitApp() (*App, error) {
+
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		return nil, err
+	}
 
 	app := &App{
 		Echo:     echo.New(),
 		ChatHub:  messages.NewHub(),
 		HttpPort: 8080,
 		PublicFS: html.PublicFS,
+		MQTT:     mqtt.ConnectMQTT(cfg.MQTTopts.ClientName, cfg.MQTTopts.BrokerURL),
+		Config:   cfg,
 	}
 
 	// Init template Renderer
@@ -43,6 +54,7 @@ func InitApp() (*App, error) {
 		err = json.Unmarshal(msg, &htmxJSON)
 		msgHTML, _ := renderer.RenderToBytes("message", map[string]any{
 			"message": htmxJSON.MQTTMsg,
+			"time":    time.Now().Format(time.DateTime),
 		})
 		fmt.Printf("msgHTML: %s\n", msgHTML)
 
@@ -53,7 +65,9 @@ func InitApp() (*App, error) {
 	e.HideBanner = true
 	e.Renderer = renderer
 	e.Static("/", "static/public/assets")
-	e.Use(middleware.Logger())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "${time_rfc3339_nano} ${method} ${uri} ${status} ${latency_human}\n",
+	}))
 
 	go app.ChatHub.Run()
 	return app, nil
