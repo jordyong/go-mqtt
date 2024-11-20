@@ -1,3 +1,6 @@
 tmp
 esp/tcp/.cache/clangd/index
 esp/tcp/build
+esp/mqtt-uart/.cache/clangd/index
+esp/uart/.cache/clangd/index
+esp/uart/build
