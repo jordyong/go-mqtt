@@ -1,15 +1,13 @@
 package config
 
-type mqttConfig struct {
-	ClientName string
-	URI        string
-	IP         string
-	Path       string
-	BrokerURL  string
-}
+import "github.com/spf13/viper"
 
 type Configuration struct {
-	MQTTopts mqttConfig
+	MQTTClientName string `mapstructure:"CLIENT_NAME"`
+	MQTTURI        string `mapstructure:"URL"`
+	MQTTIP         string `mapstructure:"IP"`
+	MQTTPort       string `mapstructure:"PORT"`
+	MQTTBrokerURL  string `mapstructure:"BROKER_URL"`
 }
 
 var (
@@ -17,16 +15,25 @@ var (
 )
 
 func LoadConfig() (*Configuration, error) {
+
+	viper.SetConfigFile(".env")
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, err
+	}
+
 	var cfg Configuration
+
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, err
+	}
+
 	setDefaultValues(&cfg)
 	GlobalConfig = &cfg
 	return &cfg, nil
 }
 
 func setDefaultValues(cfg *Configuration) {
-	cfg.MQTTopts.ClientName = "go-mqtt"
-	cfg.MQTTopts.URI = "ws://"
-	cfg.MQTTopts.IP = "172.27.2.35"
-	cfg.MQTTopts.Path = ":9001/mqtt"
-	cfg.MQTTopts.BrokerURL = cfg.MQTTopts.URI + cfg.MQTTopts.IP + cfg.MQTTopts.Path
+	cfg.MQTTBrokerURL = cfg.MQTTURI + cfg.MQTTIP + cfg.MQTTPort
 }

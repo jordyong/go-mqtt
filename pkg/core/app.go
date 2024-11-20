@@ -38,7 +38,7 @@ func InitApp() (*App, error) {
 		ChatHub:  messages.NewHub(),
 		HttpPort: 8080,
 		PublicFS: html.PublicFS,
-		MQTT:     mqtt.ConnectMQTT(cfg.MQTTopts.ClientName, cfg.MQTTopts.BrokerURL),
+		MQTT:     mqtt.ConnectMQTT(cfg.MQTTClientName, cfg.MQTTBrokerURL),
 		Config:   cfg,
 	}
 

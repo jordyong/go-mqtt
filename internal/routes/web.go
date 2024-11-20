@@ -12,8 +12,8 @@ import (
 func BindWebRoute(a *core.App) {
 
 	a.Echo.GET("/", func(c echo.Context) error {
-		clientName := a.Config.MQTTopts.ClientName
-		brokerURL := a.Config.MQTTopts.BrokerURL
+		clientName := a.Config.MQTTClientName
+		brokerURL := a.Config.MQTTBrokerURL
 		return c.Render(http.StatusOK, "index", map[string]any{
 			"IsConnected": a.MQTT.IsConnected(),
 			"ClientName":  clientName,
@@ -22,8 +22,8 @@ func BindWebRoute(a *core.App) {
 	})
 
 	a.Echo.POST("/mqtt-connect", func(c echo.Context) error {
-		clientName := a.Config.MQTTopts.ClientName
-		brokerURL := a.Config.MQTTopts.BrokerURL
+		clientName := a.Config.MQTTClientName
+		brokerURL := a.Config.MQTTBrokerURL
 
 		a.MQTT = mqtt.ConnectMQTT(clientName, brokerURL)
 
@@ -35,8 +35,8 @@ func BindWebRoute(a *core.App) {
 	})
 
 	a.Echo.POST("/mqtt-disconnect", func(c echo.Context) error {
-		clientName := a.Config.MQTTopts.ClientName
-		brokerURL := a.Config.MQTTopts.BrokerURL
+		clientName := a.Config.MQTTClientName
+		brokerURL := a.Config.MQTTBrokerURL
 		a.MQTT.Disconnect(250)
 
 		return c.Render(http.StatusOK, "topbar", map[string]any{

@@ -12,6 +12,7 @@ var f mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 }
 
 func ConnectMQTT(clientName, brokerURL string) mqtt.Client {
+	fmt.Printf("Connecting to %s at %s\n", clientName, brokerURL)
 	opts := mqtt.NewClientOptions().AddBroker(brokerURL).SetClientID(clientName)
 	opts.SetDefaultPublishHandler(f)
 	client := mqtt.NewClient(opts)
