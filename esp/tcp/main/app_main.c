@@ -47,7 +47,8 @@ static void log_error_if_nonzero(const char *message, int error_code) {
 static void mqtt_data_parser(const char *data) {
   cJSON *json_data = cJSON_Parse(data);
   if (json_data != NULL) {
-    printf("Parsed_Data: %s", json_data->valuestring);
+    cJSON *cmd = cJSON_GetObjectItemCaseSensitive(json_data, "cmd");
+    printf("Cmd_Data: %s\n", cmd->valuestring);
   }
   cJSON_Delete(json_data);
 }
