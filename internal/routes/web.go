@@ -54,10 +54,10 @@ func BindWebRoute(a *core.App) {
 		return nil
 	})
 
-	a.Echo.GET("/cmd", func(c echo.Context) error {
+	a.Echo.GET("/mqtt", func(c echo.Context) error {
 		client := a.MQTT
 		if client.IsConnected() {
-			mqtt.PublishMQTT(a.MQTT, "CMD", c.QueryParam("direction"))
+			mqtt.PublishMQTT(a.MQTT, "/topic/qos0", c.QueryParam("cmd"))
 		}
 		return nil
 	})

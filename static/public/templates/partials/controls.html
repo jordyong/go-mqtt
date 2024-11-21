@@ -1,39 +1,39 @@
 {{ define "controls" }}
-<div class="col-span-full row-span-2 mx-auto grid grid-cols-3 gap-3">
+<div class="col-span-full row-span-2 mx-auto grid grid-cols-2 gap-3">
   <div
     class="col-start-1 row-span-2 grid grid-cols-3 gap-3 rounded-3xl bg-slate-700 p-4 text-white shadow-lg"
   >
     <button
       class="col-start-2 row-start-1 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=forward"
+      hx-get="/mqtt?cmd=forward"
       hx-swap="none"
     >
       ^
     </button>
     <button
       class="col-start-1 row-start-2 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=left"
+      hx-get="/mqtt?cmd=left"
       hx-swap="none"
     >
       <
     </button>
     <button
       class="col-start-2 row-start-2 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=stop"
+      hx-get="/mqtt?cmd=stop"
       hx-swap="none"
     >
       STOP
     </button>
     <button
       class="col-start-3 row-start-2 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=right"
+      hx-get="/mqtt?cmd=right"
       hx-swap="none"
     >
       >
     </button>
     <button
       class="col-start-2 row-start-3 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=back"
+      hx-get="/mqtt?cmd=back"
       hx-swap="none"
     >
       v
@@ -44,21 +44,21 @@
   >
     <button
       class="col-start-1 row-start-1 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=pan_left"
+      hx-get="/mqtt?cmd=pan_left"
       hx-swap="none"
     >
       Pan Left
     </button>
     <button
       class="col-start-2 row-start-1 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=pan_center"
+      hx-get="/mqtt?cmd=pan_center"
       hx-swap="none"
     >
       Pan Center
     </button>
     <button
       class="col-start-3 row-start-1 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=pan_right"
+      hx-get="/mqtt?cmd=pan_right"
       hx-swap="none"
     >
       Pan Right
@@ -69,21 +69,21 @@
   >
     <button
       class="col-start-1 row-start-1 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=tilt_left"
+      hx-get="/mqtt?cmd=tilt_left"
       hx-swap="none"
     >
       Tilt Left
     </button>
     <button
       class="col-start-2 row-start-1 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=tilt_center"
+      hx-get="/mqtt?cmd=tilt_center"
       hx-swap="none"
     >
       Tilt Center
     </button>
     <button
       class="col-start-3 row-start-1 rounded-full bg-cyan-900 px-5 py-3 text-center hover:bg-orange-800"
-      hx-get="/cmd?direction=tilt_right"
+      hx-get="/mqtt?cmd=tilt_right"
       hx-swap="none"
     >
       Tilt Right

@@ -1,10 +1,15 @@
 package mqtt
 
 import (
+	"encoding/json"
 	"fmt"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
+
+type cmdMQTT struct {
+	CMD string `json:"cmd"`
+}
 
 var f mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	fmt.Printf("TOPIC: %s\n", msg.Topic())
@@ -32,7 +37,16 @@ func SubscribeMQTT(c mqtt.Client, topic string) error {
 }
 
 func PublishMQTT(c mqtt.Client, topic, msg string) error {
-	token := c.Publish(topic, 0, false, msg)
+
+	data := cmdMQTT{
+		CMD: msg,
+	}
+
+	json_msg, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		return err
+	}
+	token := c.Publish(topic, 0, false, json_msg)
 	token.Wait()
 	return nil
 }
