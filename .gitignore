@@ -4,3 +4,4 @@ esp/tcp/build
 esp/mqtt-uart/.cache/clangd/index
 esp/uart/.cache/clangd/index
 esp/uart/build
+esp/mqtt-uart/build
