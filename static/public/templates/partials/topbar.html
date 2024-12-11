@@ -1,34 +1,11 @@
 {{define "topbar"}}
 <nav
   id="topbar"
-  class="flex h-auto items-center border-b-4 border-cyan-500 bg-gray-800 shadow-lg"
+  class="sticky top-0 z-30 border-b border-gray-500 py-4 shadow-md before:absolute before:inset-0 before:-z-10 before:bg-gray-900/90 before:backdrop-blur-md h-min"
   hx-swap-oob="true"
 >
-  <div class="mx-5 flex items-center">
-    <div class="p-2">
-      <img
-        class="rounded-full h-12 w-12"
-        src="/capybara-icon.jpg"
-        alt="Your Company"
-      />
-    </div>
-    <div class="ml-5 flex items-baseline space-x-4">
-      <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-      <a
-        href="#"
-        class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-        aria-current="page"
-        >Dashboard</a
-      >
-      <a
-        href="#"
-        class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-        >Settings</a
-      >
-    </div>
-  </div>
   <form
-    class="absolute right-0 mx-5 flex flex-row justify-end"
+    class="right-0 flex flex-row justify-end"
     hx-post="/mqtt-connect"
     hx-swap="outerHTML"
   >

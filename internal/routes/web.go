@@ -15,9 +15,8 @@ func BindWebRoute(a *core.App) {
 		clientName := a.Config.MQTTClientName
 		brokerURL := a.Config.MQTTBrokerURL
 		return c.Render(http.StatusOK, "index", map[string]any{
-			"IsConnected": a.MQTT.IsConnected(),
-			"ClientName":  clientName,
-			"BrokerURL":   brokerURL,
+			"ClientName": clientName,
+			"BrokerURL":  brokerURL,
 		})
 	})
 

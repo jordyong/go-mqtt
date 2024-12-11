@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"go-mqtt/pkg/core/config"
 	messages "go-mqtt/pkg/messages"
-	"go-mqtt/pkg/mqtt"
 	"go-mqtt/pkg/render"
 	html "go-mqtt/static"
 	"io/fs"
@@ -38,7 +37,6 @@ func InitApp() (*App, error) {
 		ChatHub:  messages.NewHub(),
 		HttpPort: 8080,
 		PublicFS: html.PublicFS,
-		MQTT:     mqtt.ConnectMQTT(cfg.MQTTClientName, cfg.MQTTBrokerURL),
 		Config:   cfg,
 	}
 
