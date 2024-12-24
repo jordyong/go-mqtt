@@ -12,9 +12,27 @@ import (
 func BindWebRoute(a *core.App) {
 
 	a.Echo.GET("/", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "index", map[string]any{
+			"content": "analytics",
+		})
+	})
+
+	a.Echo.GET("/analytics", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "analytics", map[string]any{
+			"content": "analytics",
+		})
+	})
+
+	a.Echo.GET("/logs", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "logs", map[string]any{
+			"content": "logs",
+		})
+	})
+
+	a.Echo.GET("/mqtt-connect", func(c echo.Context) error {
 		clientName := a.Config.MQTTClientName
 		brokerURL := a.Config.MQTTBrokerURL
-		return c.Render(http.StatusOK, "index", map[string]any{
+		return c.Render(http.StatusOK, "topbar", map[string]any{
 			"ClientName": clientName,
 			"BrokerURL":  brokerURL,
 		})

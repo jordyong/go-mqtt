@@ -12,7 +12,12 @@
   </a>
   <div class="py-6 flex-1">
     <label class="px-3 text-xs uppercase">Dashboard</label>
-    <a href="" class="flex items-center rounded-md p-2 hover:bg-gray-700">
+    <a
+      href="/analytics"
+      class="flex items-center rounded-md p-2 hover:bg-gray-700"
+      hx-get="/analytics"
+      hx-target="#main-content"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -30,7 +35,12 @@
 
       <span class="mx-2">Analytics</span>
     </a>
-    <a href="" class="flex items-center rounded-md p-2 hover:bg-gray-700">
+    <a
+      href="/logs"
+      class="flex items-center rounded-md p-2 hover:bg-gray-700"
+      hx-get="/logs"
+      hx-target="#main-content"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

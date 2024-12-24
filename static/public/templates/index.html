@@ -30,7 +30,14 @@
   </head>
   <body class="min-h-screen bg-gray-900">
     <div class="">{{ template "sidenav" .}}</div>
-    <div class="relative ml-48 px-4">{{ template "analytics" .}}</div>
+    <div
+      id="main-content"
+      class="relative ml-48 px-4"
+      hx-swap-oob="true"
+      hx-get="/{{ .content }}"
+      hx-trigger="load"
+      hx-push-url="true"
+    ></div>
   </body>
 </html>
 
