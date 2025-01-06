@@ -5,3 +5,4 @@ esp/mqtt-uart/.cache/clangd/index
 esp/uart/.cache/clangd/index
 esp/uart/build
 esp/mqtt-uart/build
+sqlite-database.db

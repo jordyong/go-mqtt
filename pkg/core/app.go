@@ -1,10 +1,12 @@
 package core
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"go-mqtt/pkg/core/config"
+	"go-mqtt/pkg/core/database"
 	messages "go-mqtt/pkg/messages"
 	"go-mqtt/pkg/render"
 	html "go-mqtt/static"
@@ -18,6 +20,7 @@ import (
 
 type App struct {
 	Echo     *echo.Echo
+	DB       *sql.DB
 	HttpPort int
 	PublicFS fs.FS
 	ChatHub  *messages.Hub
@@ -32,8 +35,15 @@ func InitApp() (*App, error) {
 		return nil, err
 	}
 
+	var sqliteDB *sql.DB
+	sqliteDB, err = database.InitDB()
+	if err != nil {
+		return nil, err
+	}
+
 	app := &App{
 		Echo:     echo.New(),
+		DB:       sqliteDB,
 		ChatHub:  messages.NewHub(),
 		HttpPort: 8080,
 		PublicFS: html.PublicFS,
