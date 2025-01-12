@@ -14,5 +14,6 @@ func main() {
 	}
 
 	routes.BindWebRoute(app)
+	routes.SetUp(app)
 	app.Echo.Logger.Fatal(app.Echo.Start(":" + strconv.Itoa(app.HttpPort)))
 }

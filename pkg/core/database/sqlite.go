@@ -2,8 +2,9 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
-	"os"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -12,41 +13,84 @@ type SQLiteService struct {
 	db *sql.DB
 }
 
-func InitDB() (*sql.DB, error) {
-	log.Println("Creating sqlite-database.db...")
-	file, err := os.Create("sqlite-database.db")
-	if err != nil {
-		return nil, err
-	}
-	file.Close()
-	log.Println("sqlite-database.db created")
-
-	db, _ := sql.Open("sqlite3", "./sqlite-database.db")
-	defer db.Close()
-
-	// SQL statement to create the todos table if it doesn't exist
-	sqlStmt := `
- CREATE TABLE IF NOT EXISTS test (
-  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  title TEXT
- );`
-
-	_, err = db.Exec(sqlStmt)
-	if err != nil {
-		log.Fatalf(
-			"Error creating table: %q: %s\n",
-			err,
-			sqlStmt,
-		) // Log an error if table creation fails
-	}
-
-	return db, nil
+func NewSQliteService() (*SQLiteService, error) {
+	db, _ := sql.Open("sqlite3", "./sqlite-database.db") // Open the created SQLite File
+	return &SQLiteService{db: db}, nil
 }
 
-func StoreMessage() {
+func (dbService *SQLiteService) testConnection() error {
+	for i := 0; i < 3; i++ { // Retry logic
+		if err := dbService.db.Ping(); err == nil {
+			log.Println("connected to database")
+			return nil
+		}
+		log.Printf("failed to ping database"+" (attempt %d)", i+1)
+		time.Sleep(2 * time.Second) // Wait before retrying
+	}
 
+	return fmt.Errorf("failed to ping database after multiple attempts")
 }
 
-func FetchMessages() {
+func (dbService *SQLiteService) GetDB() *sql.DB {
+	dbService.testConnection()
+	return dbService.db
+}
 
+func (dbService *SQLiteService) Disconnect() {
+	if dbService.db != nil {
+		dbService.db.Close()
+		log.Println("Database connection closed")
+	}
+}
+
+func (dbService *SQLiteService) CreateTable() {
+	createTableSQL := `CREATE TABLE devices (
+		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,		
+		"status" TEXT
+	  );` // SQL Statement for Create Table
+
+	log.Println("Create table...")
+
+	db := dbService.GetDB()
+	statement, err := db.Prepare(createTableSQL) // Prepare SQL Statement
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	statement.Exec() // Execute SQL Statements
+	log.Println("student created")
+}
+
+// We are passing db reference connection from main to our method with other parameters
+func (dbService *SQLiteService) InsertStudent(
+	code string,
+	name string,
+	program string,
+) {
+	log.Println("Inserting student record ...")
+	insertStudentSQL := `INSERT INTO student(code, name, program) VALUES (?, ?, ?)`
+	db := dbService.GetDB()
+	statement, err := db.Prepare(insertStudentSQL) // Prepare statement.
+	// This is good to avoid SQL injections
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	_, err = statement.Exec(code, name, program)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+}
+
+func (dbService *SQLiteService) DisplayDevice() {
+	db := dbService.GetDB()
+	row, err := db.Query("SELECT * FROM devices ORDER BY id")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer row.Close()
+	for row.Next() { // Iterate and fetch the records from result cursor
+		var id int
+		var status string
+		row.Scan(&id, &status)
+		log.Println("Device: ", id, " ", status)
+	}
 }

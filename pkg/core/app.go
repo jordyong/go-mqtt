@@ -8,24 +8,24 @@ import (
 	"go-mqtt/pkg/core/config"
 	"go-mqtt/pkg/core/database"
 	messages "go-mqtt/pkg/messages"
+	"go-mqtt/pkg/mqtt"
 	"go-mqtt/pkg/render"
 	html "go-mqtt/static"
 	"io/fs"
 	"time"
 
-	eclipseMQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 type App struct {
-	Echo     *echo.Echo
-	DB       *sql.DB
-	HttpPort int
-	PublicFS fs.FS
-	ChatHub  *messages.Hub
-	MQTT     eclipseMQTT.Client
-	Config   *config.Configuration
+	Echo        *echo.Echo
+	HttpPort    int
+	PublicFS    fs.FS
+	ChatHub     *messages.Hub
+	DBService   *database.SQLiteService
+	MQTTService *mqtt.MqttService
+	Config      *config.Configuration
 }
 
 func InitApp() (*App, error) {
@@ -35,19 +35,24 @@ func InitApp() (*App, error) {
 		return nil, err
 	}
 
-	var sqliteDB *sql.DB
-	sqliteDB, err = database.InitDB()
+	sqliteDB, err := database.NewSQliteService()
+	if err != nil {
+		return nil, err
+	}
+
+	mqttService, err := mqtt.NewMqttService(cfg.MQTTClientName, cfg.MQTTBrokerURL)
 	if err != nil {
 		return nil, err
 	}
 
 	app := &App{
-		Echo:     echo.New(),
-		DB:       sqliteDB,
-		ChatHub:  messages.NewHub(),
-		HttpPort: 8080,
-		PublicFS: html.PublicFS,
-		Config:   cfg,
+		Echo:        echo.New(),
+		DBService:   sqliteDB,
+		MQTTService: mqttService,
+		ChatHub:     messages.NewHub(),
+		HttpPort:    8080,
+		PublicFS:    html.PublicFS,
+		Config:      cfg,
 	}
 
 	// Init template Renderer
@@ -79,4 +84,8 @@ func InitApp() (*App, error) {
 
 	go app.ChatHub.Run()
 	return app, nil
+}
+
+func (a *App) Close() {
+
 }

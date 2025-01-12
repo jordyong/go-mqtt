@@ -4,9 +4,6 @@ import "github.com/spf13/viper"
 
 type Configuration struct {
 	MQTTClientName string `mapstructure:"CLIENT_NAME"`
-	MQTTURI        string `mapstructure:"URL"`
-	MQTTIP         string `mapstructure:"IP"`
-	MQTTPort       string `mapstructure:"PORT"`
 	MQTTBrokerURL  string `mapstructure:"BROKER_URL"`
 }
 
@@ -35,5 +32,4 @@ func LoadConfig() (*Configuration, error) {
 }
 
 func setDefaultValues(cfg *Configuration) {
-	cfg.MQTTBrokerURL = cfg.MQTTURI + cfg.MQTTIP + cfg.MQTTPort
 }
