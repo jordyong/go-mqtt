@@ -44,20 +44,32 @@ func (dbService *SQLiteService) Disconnect() {
 }
 
 func (dbService *SQLiteService) CreateTable() {
-	createTableSQL := `CREATE TABLE devices (
-		"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,		
-		"status" TEXT
-	  );` // SQL Statement for Create Table
+	createDevicesTable := `CREATE TABLE devices (
+    device_id TEXT PRIMARY KEY,
+    last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	  );`
 
-	log.Println("Create table...")
+	createDataTable := `CREATE TABLE data (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_type TEXT,
+    data_value REAL,
+    FOREIGN KEY (device_id) REFERENCES devices(device_id)
+  );`
 
 	db := dbService.GetDB()
-	statement, err := db.Prepare(createTableSQL) // Prepare SQL Statement
+	statement, err := db.Prepare(createDevicesTable) // Prepare SQL Statement
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	statement.Exec() // Execute SQL Statements
-	log.Println("student created")
+
+	statement, err = db.Prepare(createDataTable) // Prepare SQL Statement
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	statement.Exec() // Execute SQL Statements
 }
 
 // We are passing db reference connection from main to our method with other parameters

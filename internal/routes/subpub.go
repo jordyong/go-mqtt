@@ -2,60 +2,66 @@ package routes
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+
 	"go-mqtt/pkg/core"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
+type DataJson struct {
+	Device_id  string  `json:"device_id"`
+	Data_type  string  `json:"data_type"`
+	Data_value float32 `json:"data_value"`
+}
+
+type DeviceJson struct {
+	Device_id string `json:"device_id"`
+}
+
 func SetUp(a *core.App) {
-	a.MQTTService.Subscribe("devices/status", func(c mqtt.Client, m mqtt.Message) {
-		fmt.Printf("TOPIC: %s\n", m.Topic())
-		fmt.Printf("MSG: %s\n", m.Payload())
-
-		db := a.DBService.GetDB()
-		stmt, err := db.Prepare(`
-      INSERT INTO devices (id, status, datetime)
-      VALUES (?,?) 
-      `)
+	var device_cb mqtt.MessageHandler = func(c mqtt.Client, m mqtt.Message) {
+		err := InsertDevice(a.DBService.GetDB(), m)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf("Failed to insert device: %s\n", err)
 		}
+	}
 
-		_, err = stmt.Exec("001", "connected")
-		if err != nil {
-			fmt.Println(err)
-		}
+	if err := a.MQTTService.Subscribe("devices/status", device_cb); err != nil {
+		fmt.Printf("Failed to subscribe: %s\n", err)
+	}
 
-		a.DBService.DisplayDevice()
-	})
-
-	var cb mqtt.MessageHandler = func(c mqtt.Client, m mqtt.Message) {
+	var data_cb mqtt.MessageHandler = func(c mqtt.Client, m mqtt.Message) {
 		err := InsertDeviceData(a.DBService.GetDB(), m)
 		if err != nil {
 			fmt.Println(err)
 		}
 	}
 
-	a.MQTTService.Subscribe("devices/data/gps", cb)
-	a.MQTTService.Subscribe("devices/data/battery/level", cb)
-	a.MQTTService.Subscribe("devices/data/battery/charge", cb)
-	a.MQTTService.Subscribe("devices/data/battery/output", cb)
+	a.MQTTService.Subscribe("devices/data/gps", data_cb)
+	a.MQTTService.Subscribe("devices/data/battery/level", data_cb)
+	a.MQTTService.Subscribe("devices/data/battery/charge", data_cb)
+	a.MQTTService.Subscribe("devices/data/battery/output", data_cb)
 
-	a.MQTTService.Publish("devices/status", "connected")
+	a.MQTTService.Publish("devices/status", DeviceJson{"web_client"})
 }
 
 func InsertDevice(db *sql.DB, msg mqtt.Message) error {
 	stmt, err := db.Prepare(`
-    INSERT INTO device (device_id)
+    INSERT INTO devices (device_id)
     VALUES(?)
     `)
 	if err != nil {
 		return err
 	}
 
-	device_id := "001"
-	_, err = stmt.Exec(device_id)
+	var deviceInfo DeviceJson
+	if err := json.Unmarshal(msg.Payload(), &deviceInfo); err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(deviceInfo.Device_id)
 	if err != nil {
 		return err
 	}
@@ -72,8 +78,12 @@ func InsertDeviceData(db *sql.DB, msg mqtt.Message) error {
 		return err
 	}
 
-	device_id, data_type, data_value := ParseMqttData(msg)
-	_, err = stmt.Exec(device_id, data_type, data_value)
+	var deviceData DataJson
+	if err := json.Unmarshal(msg.Payload(), &deviceData); err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(deviceData.Device_id, deviceData.Data_type, deviceData.Data_value)
 	if err != nil {
 		return err
 	}
