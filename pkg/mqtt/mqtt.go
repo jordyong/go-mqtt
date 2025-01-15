@@ -20,11 +20,24 @@ func NewMqttService(clientName, brokerURL string) (*MqttService, error) {
 	opts := mqtt.NewClientOptions().AddBroker(brokerURL).SetClientID(clientName)
 	opts.SetDefaultPublishHandler(f)
 	c := mqtt.NewClient(opts)
-	if token := c.Connect(); token.Wait() && token.Error() != nil {
-		return nil, token.Error()
-	}
 
 	return &MqttService{client: c}, nil
+}
+
+func (ms *MqttService) IsConnected() bool {
+	return ms.client.IsConnected()
+}
+
+func (ms *MqttService) Connect() error {
+	if token := ms.client.Connect(); token.Wait() && token.Error() != nil {
+		return token.Error()
+	}
+	return nil
+}
+
+func (ms *MqttService) Disconnect() error {
+	ms.client.Disconnect(250)
+	return nil
 }
 
 func (ms *MqttService) Subscribe(topic string, handler mqtt.MessageHandler) error {
@@ -37,10 +50,5 @@ func (ms *MqttService) Subscribe(topic string, handler mqtt.MessageHandler) erro
 func (ms *MqttService) Publish(topic string, msg any) error {
 	token := ms.client.Publish(topic, 0, false, msg)
 	token.Wait()
-	return nil
-}
-
-func (ms *MqttService) Disconnect() error {
-	ms.client.Disconnect(250)
 	return nil
 }

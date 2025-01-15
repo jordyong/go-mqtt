@@ -1,7 +1,6 @@
 package core
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"

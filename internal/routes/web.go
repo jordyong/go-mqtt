@@ -3,7 +3,6 @@ package routes
 import (
 	"go-mqtt/pkg/core"
 	"go-mqtt/pkg/messages"
-	"go-mqtt/pkg/mqtt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -33,8 +32,9 @@ func BindWebRoute(a *core.App) {
 		clientName := a.Config.MQTTClientName
 		brokerURL := a.Config.MQTTBrokerURL
 		return c.Render(http.StatusOK, "topbar", map[string]any{
-			"ClientName": clientName,
-			"BrokerURL":  brokerURL,
+			"IsConnected": a.MQTTService.IsConnected(),
+			"ClientName":  clientName,
+			"BrokerURL":   brokerURL,
 		})
 	})
 
@@ -42,10 +42,11 @@ func BindWebRoute(a *core.App) {
 		clientName := a.Config.MQTTClientName
 		brokerURL := a.Config.MQTTBrokerURL
 
-		a.MQTT = mqtt.ConnectMQTT(clientName, brokerURL)
+		a.MQTTService.Connect()
+		SetUp(a)
 
 		return c.Render(http.StatusOK, "topbar", map[string]any{
-			"IsConnected": a.MQTT.IsConnected(),
+			"IsConnected": a.MQTTService.IsConnected(),
 			"ClientName":  clientName,
 			"BrokerURL":   brokerURL,
 		})
@@ -54,10 +55,10 @@ func BindWebRoute(a *core.App) {
 	a.Echo.POST("/mqtt-disconnect", func(c echo.Context) error {
 		clientName := a.Config.MQTTClientName
 		brokerURL := a.Config.MQTTBrokerURL
-		a.MQTT.Disconnect(250)
+		a.MQTTService.Disconnect()
 
 		return c.Render(http.StatusOK, "topbar", map[string]any{
-			"IsConnected": a.MQTT.IsConnected(),
+			"IsConnected": a.MQTTService.IsConnected(),
 			"ClientName":  clientName,
 			"BrokerURL":   brokerURL,
 		})
@@ -72,9 +73,9 @@ func BindWebRoute(a *core.App) {
 	})
 
 	a.Echo.GET("/mqtt", func(c echo.Context) error {
-		client := a.MQTT
+		client := a.MQTTService
 		if client.IsConnected() {
-			mqtt.PublishMQTT(a.MQTT, "/topic/qos0", c.QueryParam("cmd"))
+			a.MQTTService.Publish("/topic/qos0", c.QueryParam("cmd"))
 		}
 		return nil
 	})
