@@ -33,8 +33,16 @@ func SetUp(a *core.App) {
 	}
 
 	var data_cb mqtt.MessageHandler = func(c mqtt.Client, m mqtt.Message) {
-		err := InsertDeviceData(a.DBService.GetDB(), m)
-		if err != nil {
+		var deviceData DataJson
+		if err := json.Unmarshal(m.Payload(), &deviceData); err != nil {
+			fmt.Println(err)
+		}
+
+		if err := LogDeviceData(a.DBService.GetDB(), deviceData); err != nil {
+			fmt.Println(err)
+		}
+
+		if err := UpdateDeviceInfo(a.DBService.GetDB(), deviceData); err != nil {
 			fmt.Println(err)
 		}
 	}
@@ -69,17 +77,30 @@ func InsertDevice(db *sql.DB, msg mqtt.Message) error {
 	return nil
 }
 
-func InsertDeviceData(db *sql.DB, msg mqtt.Message) error {
+func UpdateDeviceInfo(db *sql.DB, deviceData DataJson) error {
+	// Construct the dynamic SQL query
+	query := fmt.Sprintf("UPDATE devices SET %s = ? WHERE device_id = ?", deviceData.Data_type)
+
+	// Prepare the statement
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(deviceData.Data_value, deviceData.Device_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func LogDeviceData(db *sql.DB, deviceData DataJson) error {
 	stmt, err := db.Prepare(`
     INSERT INTO data (device_id, data_type, data_value)
     VALUES(?,?,?)
     `)
 	if err != nil {
-		return err
-	}
-
-	var deviceData DataJson
-	if err := json.Unmarshal(msg.Payload(), &deviceData); err != nil {
 		return err
 	}
 

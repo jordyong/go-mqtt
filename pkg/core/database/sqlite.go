@@ -46,7 +46,8 @@ func (dbService *SQLiteService) Disconnect() {
 func (dbService *SQLiteService) CreateTable() {
 	createDevicesTable := `CREATE TABLE devices (
     device_id TEXT PRIMARY KEY,
-    last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status TEXT,
+    gps REAL,
 	  );`
 
 	createDataTable := `CREATE TABLE data (
@@ -70,26 +71,6 @@ func (dbService *SQLiteService) CreateTable() {
 		log.Fatal(err.Error())
 	}
 	statement.Exec() // Execute SQL Statements
-}
-
-// We are passing db reference connection from main to our method with other parameters
-func (dbService *SQLiteService) InsertStudent(
-	code string,
-	name string,
-	program string,
-) {
-	log.Println("Inserting student record ...")
-	insertStudentSQL := `INSERT INTO student(code, name, program) VALUES (?, ?, ?)`
-	db := dbService.GetDB()
-	statement, err := db.Prepare(insertStudentSQL) // Prepare statement.
-	// This is good to avoid SQL injections
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-	_, err = statement.Exec(code, name, program)
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
 }
 
 func (dbService *SQLiteService) DisplayDevice() {
