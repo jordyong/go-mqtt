@@ -21,7 +21,7 @@ func NewSQliteService() (*SQLiteService, error) {
 func (dbService *SQLiteService) testConnection() error {
 	for i := 0; i < 3; i++ { // Retry logic
 		if err := dbService.db.Ping(); err == nil {
-			log.Println("connected to database")
+			// log.Println("connected to database")
 			return nil
 		}
 		log.Printf("failed to ping database"+" (attempt %d)", i+1)

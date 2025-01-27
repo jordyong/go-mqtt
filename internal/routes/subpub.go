@@ -16,15 +16,28 @@ type DataJson struct {
 	Data_value float32 `json:"data_value"`
 }
 
+type gps_location struct {
+	Device_id string  `json:"device_id"`
+	Latitude  float32 `json:"latitude"`
+	Longitude float32 `json:"longitude"`
+}
+
 type DeviceJson struct {
 	Device_id string `json:"device_id"`
 }
 
 func SetUp(a *core.App) {
 	var device_cb mqtt.MessageHandler = func(c mqtt.Client, m mqtt.Message) {
-		err := InsertDevice(a.DBService.GetDB(), m)
+		var deviceInfo DeviceJson
+		if err := json.Unmarshal(m.Payload(), &deviceInfo); err != nil {
+			fmt.Printf("Failed json Unmarshal: %s\n", err)
+			return
+		}
+
+		err := InsertDevice(a.DBService.GetDB(), deviceInfo)
 		if err != nil {
 			fmt.Printf("Failed to insert device: %s\n", err)
+			return
 		}
 	}
 
@@ -36,14 +49,17 @@ func SetUp(a *core.App) {
 		var deviceData DataJson
 		if err := json.Unmarshal(m.Payload(), &deviceData); err != nil {
 			fmt.Println(err)
+			return
 		}
 
 		if err := LogDeviceData(a.DBService.GetDB(), deviceData); err != nil {
 			fmt.Println(err)
+			return
 		}
 
 		if err := UpdateDeviceInfo(a.DBService.GetDB(), deviceData); err != nil {
 			fmt.Println(err)
+			return
 		}
 	}
 
@@ -51,21 +67,14 @@ func SetUp(a *core.App) {
 	a.MQTTService.Subscribe("devices/data/battery/level", data_cb)
 	a.MQTTService.Subscribe("devices/data/battery/charge", data_cb)
 	a.MQTTService.Subscribe("devices/data/battery/output", data_cb)
-
-	a.MQTTService.Publish("devices/status", DeviceJson{"web_client"})
 }
 
-func InsertDevice(db *sql.DB, msg mqtt.Message) error {
+func InsertDevice(db *sql.DB, deviceInfo DeviceJson) error {
 	stmt, err := db.Prepare(`
     INSERT INTO devices (device_id)
     VALUES(?)
     `)
 	if err != nil {
-		return err
-	}
-
-	var deviceInfo DeviceJson
-	if err := json.Unmarshal(msg.Payload(), &deviceInfo); err != nil {
 		return err
 	}
 

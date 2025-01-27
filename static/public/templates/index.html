@@ -28,16 +28,14 @@
       crossorigin=""
     ></script>
   </head>
-  <body class="min-h-screen bg-gray-900">
-    <div class="">{{ template "sidenav" .}}</div>
-    <div
-      id="main-content"
-      class="relative ml-48 px-4"
-      hx-swap-oob="true"
-      hx-get="/{{ .content }}"
-      hx-trigger="load"
-      hx-push-url="true"
-    ></div>
+  <body class="flex flex-col min-h-screen max-h-screen bg-gray-900 overflow-hidden">
+      <nav id="topbar" hx-get="/mqtt-connect" hx-trigger="load"></nav>
+      <main
+        id="main-container"
+        class="flex flex-grow overflow-hidden p-4"
+      >
+      <div id="main-content" class="flex flex-grow main-content w-full" hx-get="/analytics" hx-trigger="load"></div>
+      </main>
   </body>
 </html>
 

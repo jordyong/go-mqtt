@@ -1,42 +1,67 @@
 {{define "topbar"}}
-<nav
-  id="topbar"
-  class="sticky top-0 z-30 border-b border-gray-500 py-4 shadow-md before:absolute before:inset-0 before:-z-10 before:bg-gray-900/90 before:backdrop-blur-md h-min"
-  hx-swap-oob="true"
->
-  <form
-    class="right-0 flex flex-row justify-end"
-    hx-post="/mqtt-connect"
-    hx-swap="outerHTML"
-  >
-    <div class="rounded-md bg-gray-300 mx-1 px-3 py-2 text-sm font-medium">
-      {{ .ClientName }}
+<nav id="topbar" class="sticky top-0 z-30 flex h-min flex-row border-b border-gray-500 p-2 shadow-md before:absolute before:inset-0 before:-z-10 before:bg-gray-900/90 before:backdrop-blur-md" hx-swap-oob="true">
+  <div class="flex flex-1 flex-row gap-2 text-gray-300 m-auto">
+    <a 
+      href="/"  
+      class="flex items-center rounded-md p-2 hover:bg-gray-800"
+      hx-get="/"
+      hx-target="#main-content"
+    >
+      <img
+        class="rounded-full h-12 w-12"
+        src="/capybara-icon.jpg"
+      />
+      <label class="p-2 font-extrabold text-xl "> SMART HARVESTING SWARM </label>
+    </a>
+    <a 
+      href="/analytics"  
+      class="flex items-center"
+      hx-get="/analytics"
+      hx-target="#main-content"
+    >
+      <label class="rounded-md p-2 hover:bg-gray-800">Analytics </label>
+    </a>
+    <a 
+      href="/logs"  
+      class="flex items-center"
+      hx-get="/logs"
+      hx-target="#main-content"
+    >
+      <label class="rounded-md p-2 hover:bg-gray-800">Logs
+    </a>
+  </div>
+  <form class="right-0 flex flex-row justify-end gap-2 text-sm" hx-post="/mqtt-connect" hx-swap="outerHTML">
+    <div class="flex items-center">
+      <label class="rounded-md bg-gray-300 p-2 font-medium">
+        {{ .ClientName }}
+      </label>
     </div>
-    <div class="rounded-md bg-gray-300 mx-1 px-3 py-2 text-sm font-medium">
-      {{ .BrokerURL }}
+    <div class="flex items-center">
+      <label class="rounded-md bg-gray-300 p-2 font-medium">
+        {{ .BrokerURL }}
+      </label>
     </div>
     {{ if .IsConnected }}
-    <div>
+    <div class="flex items-center">
       <button
         id="mqtt-connection-btn"
         type="disconnect"
-        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
+        class="rounded-md bg-cyan-700 p-2 font-semibold text-white hover:bg-cyan-900"
         hx-post="/mqtt-disconnect"
       >
         Disconnect
       </button>
     </div>
     {{ else }}
-    <div class="">
+    <div class="flex items-center">
       <button
         id="mqtt-connection-btn"
         type="connect"
-        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white"
+        class="rounded-md bg-cyan-700 p-2 font-semibold text-white hover:bg-cyan-900"
       >
         Connect
       </button>
     </div>
-
     {{ end }}
   </form>
 </nav>
