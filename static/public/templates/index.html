@@ -4,14 +4,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MQTT Dashboard</title>
+    <title>Solar Swarm Dashboard</title>
     <!-- MQTT.js -->
     <script src="https://unpkg.com/mqtt@3.0.0/dist/mqtt.min.js"></script>
     <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js"></script>
+    <script src="scripts/htmx.min.js"></script>
     <!--Tailwind-->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
     <!--Chart.js-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -28,13 +27,13 @@
       crossorigin=""
     ></script>
   </head>
-  <body class="flex flex-col min-h-screen max-h-screen bg-gray-900 overflow-hidden">
+  <body class="flex flex-col min-h-screen bg-gray-900">
       <nav id="topbar" hx-get="/mqtt-connect" hx-trigger="load"></nav>
       <main
         id="main-container"
         class="flex flex-grow overflow-hidden p-4"
       >
-      <div id="main-content" class="flex flex-grow main-content w-full" hx-get="/analytics" hx-trigger="load"></div>
+      <div id="main-content" class="flex flex-grow main-content w-full" hx-get="/logs" hx-trigger="load"></div>
       </main>
   </body>
 </html>
